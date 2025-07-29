@@ -22,9 +22,15 @@ export async function getAiChatResponse(query: string, history: z.infer<typeof M
       error: 'Invalid input.',
     };
   }
+  
+  // Convert 'assistant' role to 'model' for the AI flow
+  const flowHistory = history.map(message => ({
+    ...message,
+    role: message.role === 'assistant' ? 'model' : 'user',
+  }));
 
   try {
-    const result = await aiChatAssistant(parsed.data);
+    const result = await aiChatAssistant({ query: parsed.data.query, history: flowHistory });
     return {
       success: true,
       data: result,
