@@ -71,7 +71,7 @@ export default function DashboardPage() {
                     <feature.icon className="h-6 w-6" />
                   </div>
                   <div className="min-w-0">
-                    <CardTitle className="font-headline break-words">
+                    <CardTitle className="font-headline text-xl break-words">
                       {feature.title}
                     </CardTitle>
                     <CardDescription className="break-words">
