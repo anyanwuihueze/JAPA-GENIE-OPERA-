@@ -1,4 +1,3 @@
-
 import {
   Card,
   CardContent,
@@ -45,10 +44,10 @@ export default function DashboardPage() {
   return (
     <div className="flex flex-1 flex-col gap-8 p-4 md:p-8">
       <header>
-        <h1 className="font-headline text-3xl font-bold tracking-tight">
+        <h1 className="font-headline text-3xl font-bold tracking-tight break-words">
           Welcome to VisaFlow
         </h1>
-        <p className="text-muted-foreground">
+        <p className="text-muted-foreground break-words">
           Your AI-powered guide to global visa opportunities.
         </p>
       </header>
@@ -64,16 +63,18 @@ export default function DashboardPage() {
           {featureCards.map((feature) => (
             <Card
               key={feature.title}
-              className="flex flex-col justify-between shadow-md transition-all hover:shadow-lg"
+              className="flex flex-col justify-between shadow-md transition-all hover:shadow-lg break-words"
             >
               <div>
                 <CardHeader className="flex-row items-start gap-4">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 text-primary shrink-0">
+                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
                     <feature.icon className="h-6 w-6" />
                   </div>
-                  <div>
-                    <CardTitle className="font-headline">{feature.title}</CardTitle>
-                    <CardDescription>
+                  <div className="min-w-0">
+                    <CardTitle className="font-headline break-words">
+                      {feature.title}
+                    </CardTitle>
+                    <CardDescription className="break-words">
                       {feature.description}
                     </CardDescription>
                   </div>
