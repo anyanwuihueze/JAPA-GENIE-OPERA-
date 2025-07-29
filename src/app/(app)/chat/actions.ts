@@ -3,22 +3,28 @@
 import { aiChatAssistant } from '@/ai/flows/ai-chat-assistant';
 import { z } from 'zod';
 
-const chatSchema = z.object({
-  query: z.string().min(1, 'Query cannot be empty.'),
+const MessageSchema = z.object({
+  role: z.enum(['user', 'assistant']),
+  content: z.string(),
 });
 
-export async function getAiChatResponse(query: string) {
-  const parsed = chatSchema.safeParse({ query });
+const chatSchema = z.object({
+  query: z.string().min(1, 'Query cannot be empty.'),
+  history: z.array(MessageSchema),
+});
+
+export async function getAiChatResponse(query: string, history: z.infer<typeof MessageSchema>[]) {
+  const parsed = chatSchema.safeParse({ query, history });
 
   if (!parsed.success) {
     return {
       success: false,
-      error: 'Invalid query.',
+      error: 'Invalid input.',
     };
   }
 
   try {
-    const result = await aiChatAssistant({ query });
+    const result = await aiChatAssistant(parsed.data);
     return {
       success: true,
       data: result,

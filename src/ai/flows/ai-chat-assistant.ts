@@ -5,7 +5,13 @@
 import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
 
+const MessageSchema = z.object({
+  role: z.enum(['user', 'assistant']),
+  content: z.string(),
+});
+
 const ChatInputSchema = z.object({
+  history: z.array(MessageSchema).describe('The conversation history.'),
   query: z.string().describe('The user query.'),
 });
 
@@ -25,7 +31,17 @@ const prompt = ai.definePrompt({
   name: 'aiChatAssistantPrompt',
   input: {schema: ChatInputSchema},
   output: {schema: ChatOutputSchema},
-  prompt: `You are a helpful AI assistant specialized in providing information and support for visa application processes. Respond to the user query with accurate and helpful information.\n\nUser Query: {{{query}}}`,
+  system: `You are Japa Genie, an AI visa expert for Africans. Always ask for 1) citizenship, 2) destination, 3) budget, 4) purpose, 5) travel history, 6) education & job. If any are missing, ask once; if all are present, give a concise visa recommendation.`,
+  prompt: `{{#each history}}
+{{#if (eq role 'user')}}
+User: {{{content}}}
+{{else}}
+Assistant: {{{content}}}
+{{/if}}
+{{/each}}
+
+User: {{{query}}}
+Assistant:`,
 });
 
 const aiChatAssistantFlow = ai.defineFlow(
