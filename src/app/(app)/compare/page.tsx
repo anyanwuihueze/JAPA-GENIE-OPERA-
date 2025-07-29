@@ -6,7 +6,7 @@ const visaData = [
   {
     country: "United States",
     name: "H-1B Visa",
-    description: "For specialty occupations requiring a bachelor's degree or higher.",
+    description: "For specialty occupations requiring a bachelor's degree or higher in a specific field.",
     processingTime: "4-12 months",
     cost: "$4,000 - $11,000",
     eligibility: [
@@ -20,7 +20,7 @@ const visaData = [
   {
     country: "United Kingdom",
     name: "Skilled Worker Visa",
-    description: "For individuals with a job offer from a licensed sponsor.",
+    description: "For individuals with a job offer from a licensed sponsor for an eligible skilled job.",
     processingTime: "3-8 weeks",
     cost: "£1,500 - £3,500",
     eligibility: [
@@ -34,7 +34,7 @@ const visaData = [
   {
     country: "Canada",
     name: "Express Entry",
-    description: "A points-based system for skilled immigrants and their families.",
+    description: "A points-based system for skilled immigrants seeking permanent residence.",
     processingTime: "6-9 months",
     cost: "$2,300 - $4,500 CAD",
     eligibility: [
@@ -68,9 +68,9 @@ export default function ComparePage() {
                   </div>
                   <Badge variant="secondary">{visa.tags[0]}</Badge>
                 </div>
-                <p className="pt-2 text-sm text-muted-foreground">{visa.description}</p>
               </CardHeader>
               <CardContent className="flex-1 space-y-4">
+                 <p className="text-sm text-muted-foreground">{visa.description}</p>
                 <div>
                   <h4 className="font-semibold text-sm mb-2">Key Metrics</h4>
                   <div className="text-sm text-muted-foreground space-y-1">
