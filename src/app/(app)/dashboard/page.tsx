@@ -1,9 +1,11 @@
+
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
+  CardFooter,
 } from '@/components/ui/card';
 import { ProgressMap } from '@/components/ProgressMap';
 import { Button } from '@/components/ui/button';
@@ -64,25 +66,27 @@ export default function DashboardPage() {
               key={feature.title}
               className="flex flex-col justify-between shadow-md transition-all hover:shadow-lg"
             >
-              <CardHeader className="flex-row items-start gap-4 space-y-0">
-                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 text-primary shrink-0">
-                  <feature.icon className="h-6 w-6" />
-                </div>
-                <div className="flex flex-col">
-                  <CardTitle className="font-headline">{feature.title}</CardTitle>
-                  <CardDescription className="whitespace-normal">
-                    {feature.description}
-                  </CardDescription>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <Button asChild className="w-full mt-auto">
+              <div>
+                <CardHeader className="flex-row items-start gap-4">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 text-primary shrink-0">
+                    <feature.icon className="h-6 w-6" />
+                  </div>
+                  <div>
+                    <CardTitle className="font-headline">{feature.title}</CardTitle>
+                    <CardDescription>
+                      {feature.description}
+                    </CardDescription>
+                  </div>
+                </CardHeader>
+              </div>
+              <CardFooter>
+                <Button asChild className="w-full">
                   <Link href={feature.href}>
                     {feature.cta}
                     <ArrowRight className="ml-2 h-4 w-4" />
                   </Link>
                 </Button>
-              </CardContent>
+              </CardFooter>
             </Card>
           ))}
         </div>
