@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState } from 'react';
@@ -143,20 +144,20 @@ export function RecommendationForm() {
         <CardHeader>
           <CardTitle className="font-headline">AI Recommendations</CardTitle>
         </CardHeader>
-        <CardContent className="flex-1 flex items-center justify-center">
+        <CardContent className="flex-1 flex items-start justify-center">
           {loading && (
-            <div className="flex flex-col items-center gap-2 text-muted-foreground">
+            <div className="flex flex-col items-center gap-2 text-muted-foreground pt-10">
               <Loader2 className="h-8 w-8 animate-spin text-primary" />
               <p>Analyzing your profile...</p>
             </div>
           )}
           {!loading && !result && (
-            <div className="text-center text-muted-foreground">
+            <div className="text-center text-muted-foreground pt-10">
               <p>Your recommended visa options will appear here.</p>
             </div>
           )}
           {result && (
-            <div className="space-y-6">
+            <div className="space-y-6 w-full">
               <div>
                 <h3 className="font-semibold flex items-center gap-2 mb-2">
                   <List className="h-5 w-5 text-primary"/>
