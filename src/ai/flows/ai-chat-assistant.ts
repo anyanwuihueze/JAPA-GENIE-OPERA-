@@ -34,12 +34,17 @@ const aiChatAssistantFlow = ai.defineFlow(
     outputSchema: ChatOutputSchema,
   },
   async ({ query, history }) => {
-    
     const systemPrompt = `You are Japa Genie, an AI visa expert for Africans. Always ask for 1) citizenship, 2) destination, 3) budget, 4) purpose, 5) travel history, 6) education & job. If any are missing, ask once; if all are present, give a concise visa recommendation.`;
     
+    // The Gemini API requires the history to start with a 'user' role.
+    // Prepend the system prompt to the first user query.
+    const fullHistory = [...history];
+    if (fullHistory.length === 0) {
+        query = `${systemPrompt}\n\nUSER_QUERY: ${query}`;
+    }
+
     const { output } = await ai.generate({
-      system: systemPrompt,
-      history: history,
+      history: fullHistory,
       prompt: query,
     });
     
