@@ -31,8 +31,9 @@ const prompt = ai.definePrompt({
   name: 'aiChatAssistantPrompt',
   input: {schema: ChatInputSchema},
   output: {schema: ChatOutputSchema},
-  system: `You are Japa Genie, an AI visa expert for Africans. Always ask for 1) citizenship, 2) destination, 3) budget, 4) purpose, 5) travel history, 6) education & job. If any are missing, ask once; if all are present, give a concise visa recommendation.`,
-  prompt: `{{#each history}}
+  prompt: `You are Japa Genie, an AI visa expert for Africans. Always ask for 1) citizenship, 2) destination, 3) budget, 4) purpose, 5) travel history, 6) education & job. If any are missing, ask once; if all are present, give a concise visa recommendation.
+
+{{#each history}}
 {{#if (eq role 'user')}}
 User: {{{content}}}
 {{else}}
