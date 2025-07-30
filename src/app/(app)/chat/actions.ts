@@ -25,8 +25,8 @@ export async function getAiChatResponse(query: string, history: z.infer<typeof M
   
   // Convert 'assistant' role to 'model' for the AI flow
   const flowHistory = history.map(message => ({
-    ...message,
     role: message.role === 'assistant' ? 'model' : 'user',
+    content: message.content,
   }));
 
   try {

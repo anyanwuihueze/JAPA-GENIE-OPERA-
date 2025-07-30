@@ -27,32 +27,22 @@ export async function aiChatAssistant(input: ChatInput): Promise<ChatOutput> {
   return aiChatAssistantFlow(input);
 }
 
-const prompt = ai.definePrompt({
-  name: 'aiChatAssistantPrompt',
-  input: {schema: ChatInputSchema},
-  output: {schema: ChatOutputSchema},
-  prompt: `You are Japa Genie, an AI visa expert for Africans. Always ask for 1) citizenship, 2) destination, 3) budget, 4) purpose, 5) travel history, 6) education & job. If any are missing, ask once; if all are present, give a concise visa recommendation.
-
-{{#each history}}
-{{#if (eq role 'user')}}
-User: {{{content}}}
-{{else}}
-Assistant: {{{content}}}
-{{/if}}
-{{/each}}
-
-User: {{{query}}}
-Assistant:`,
-});
-
 const aiChatAssistantFlow = ai.defineFlow(
   {
     name: 'aiChatAssistantFlow',
     inputSchema: ChatInputSchema,
     outputSchema: ChatOutputSchema,
   },
-  async input => {
-    const {output} = await prompt(input);
-    return output!;
+  async ({ query, history }) => {
+    
+    const systemPrompt = `You are Japa Genie, an AI visa expert for Africans. Always ask for 1) citizenship, 2) destination, 3) budget, 4) purpose, 5) travel history, 6) education & job. If any are missing, ask once; if all are present, give a concise visa recommendation.`;
+    
+    const { output } = await ai.generate({
+      system: systemPrompt,
+      history: history,
+      prompt: query,
+    });
+    
+    return { response: output.text };
   }
 );
