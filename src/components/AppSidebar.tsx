@@ -17,10 +17,15 @@ import {
   LayoutDashboard,
   MessageSquare,
   Settings,
+  LogIn,
+  LogOut,
 } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 import { Logo } from './Logo';
+import { useAuth } from '@/context/AuthContext';
+import { logoutAction } from '@/app/auth/actions';
+import { Button } from './ui/button';
 
 const menuItems = [
   {
@@ -51,6 +56,7 @@ const menuItems = [
 
 export function AppSidebar() {
   const pathname = usePathname();
+  const { user } = useAuth();
 
   return (
     <Sidebar>
@@ -78,25 +84,41 @@ export function AppSidebar() {
         </SidebarMenu>
       </SidebarContent>
       <SidebarFooter>
-        <SidebarMenu>
+         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton tooltip="Settings">
               <Settings />
               <span>Settings</span>
             </SidebarMenuButton>
           </SidebarMenuItem>
-          <SidebarMenuItem>
-            <SidebarMenuButton size="lg" className="gap-4 !p-2" tooltip="Profile">
-              <Avatar className="size-8">
-                <AvatarImage src="https://placehold.co/40x40.png" alt="User avatar" data-ai-hint="person" />
-                <AvatarFallback>U</AvatarFallback>
-              </Avatar>
-              <div className="flex flex-col">
-                <span className="text-sm font-semibold">User</span>
-                <span className="text-xs text-muted-foreground">user@example.com</span>
-              </div>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
+          {user ? (
+            <SidebarMenuItem>
+              <form action={logoutAction} className="w-full">
+                <SidebarMenuButton tooltip="Logout" size="lg" className="gap-4 !p-2 w-full">
+                   <Avatar className="size-8">
+                    <AvatarImage src="https://placehold.co/40x40.png" alt="User avatar" data-ai-hint="person" />
+                    <AvatarFallback>{user.email?.[0]?.toUpperCase()}</AvatarFallback>
+                  </Avatar>
+                  <div className="flex flex-col items-start">
+                    <span className="text-sm font-semibold">Logout</span>
+                    <span className="text-xs text-muted-foreground">{user.email}</span>
+                  </div>
+                   <Button variant="ghost" size="icon" type="submit" className="ml-auto">
+                      <LogOut />
+                   </Button>
+                </SidebarMenuButton>
+              </form>
+            </SidebarMenuItem>
+          ) : (
+             <SidebarMenuItem>
+                <Link href="/login" className="w-full">
+                    <SidebarMenuButton tooltip="Login" >
+                        <LogIn />
+                        <span>Login</span>
+                    </SidebarMenuButton>
+                </Link>
+            </SidebarMenuItem>
+          )}
         </SidebarMenu>
       </SidebarFooter>
     </Sidebar>
