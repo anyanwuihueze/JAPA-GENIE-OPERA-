@@ -1,0 +1,1 @@
+export const devTest = "Firebase dev is awake";
