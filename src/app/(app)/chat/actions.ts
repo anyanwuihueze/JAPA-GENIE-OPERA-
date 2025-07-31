@@ -1,6 +1,6 @@
 'use server';
 
-import { aiChatAssistant } from '@/ai/flows/ai-chat-assistant';
+import { aiChatAssistant, type ChatInput } from '@/ai/flows/ai-chat-assistant';
 import { z } from 'zod';
 
 const MessageSchema = z.object({
@@ -27,7 +27,7 @@ export async function getAiChatResponse(query: string, history: z.infer<typeof M
   const flowHistory = history.map(message => ({
     role: message.role === 'assistant' ? 'model' : 'user',
     content: message.content,
-  }));
+  })) as ChatInput['history'];
 
   try {
     const result = await aiChatAssistant({ query: parsed.data.query, history: flowHistory });
