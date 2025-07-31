@@ -41,7 +41,7 @@ export function ChatInterface() {
       try {
         const historyForApi = messages.map(msg => ({
           role: msg.role === 'assistant' ? 'model' : 'user',
-          parts: [{ text: msg.content }],
+          content: msg.content,
         }));
 
         const res = await fetch('/api/chat', {
