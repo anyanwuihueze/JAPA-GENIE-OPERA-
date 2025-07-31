@@ -1,7 +1,6 @@
 'use client';
 
 import {useState, useRef, useEffect, useTransition} from 'react';
-import {getAiChatResponse} from './actions';
 import {Button} from '@/components/ui/button';
 import {Input} from '@/components/ui/input';
 import {Avatar, AvatarFallback} from '@/components/ui/avatar';
@@ -35,26 +34,40 @@ export function ChatInterface() {
 
     const userMessage: Message = {role: 'user', content: input};
     setMessages(prev => [...prev, userMessage]);
+    const currentInput = input;
     setInput('');
 
     startTransition(async () => {
-      const response = await getAiChatResponse(
-        userMessage.content,
-        messages // Pass the history *before* the new user message
-      );
+      try {
+        const historyForApi = messages.map(msg => ({
+          role: msg.role === 'assistant' ? 'model' : 'user',
+          parts: [{ text: msg.content }],
+        }));
 
-      if (response.success && response.data) {
+        const res = await fetch('/api/chat', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ prompt: currentInput, context: historyForApi }),
+        });
+        
+        if (!res.ok) {
+           throw new Error(`API error: ${res.statusText}`);
+        }
+
+        const { reply } = await res.json();
+        
         setMessages(prev => [
           ...prev,
-          {role: 'assistant', content: response.data.response},
+          {role: 'assistant', content: reply},
         ]);
-      } else {
+
+      } catch (error) {
+        console.error(error);
         setMessages(prev => [
           ...prev,
           {
             role: 'assistant',
-            content:
-              'Sorry, I encountered an error. Please try again.',
+            content: 'Sorry, I encountered an error. Please try again.',
           },
         ]);
       }
