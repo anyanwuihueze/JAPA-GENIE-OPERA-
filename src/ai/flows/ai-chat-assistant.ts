@@ -40,28 +40,23 @@ const aiChatAssistantFlow = ai.defineFlow(
 
     const systemMessage = {
       role: 'user' as const,
-      content: [
-        {
-          text:
-            'You are Japa Genie, an AI visa expert for Africans. ' +
-            'Ask once for citizenship, destination, budget, purpose, travel history, education/job. ' +
-            'Then give concise visa advice.',
-        },
-      ],
+      content:
+        'You are Japa Genie, an AI visa expert for Africans. ' +
+        'Ask once for citizenship, destination, budget, purpose, travel history, education/job. ' +
+        'Then give concise visa advice.',
     };
 
     const modelMessage = {
       role: 'model' as const,
-      content: [{text: 'Understood. I am Japa Genie. How can I help you today?'}],
-    }
+      content: 'Understood. I am Japa Genie. How can I help you today?',
+    };
 
-    const contents = [systemMessage, modelMessage, ...history];
-    contents.push({role: 'user', content: [{text: query}]});
+    const conversationHistory = [systemMessage, modelMessage, ...history];
+    conversationHistory.push({role: 'user', content: query});
 
     const {output} = await generate({
       model: 'googleai/gemini-1.5-flash-latest',
-      prompt: query,
-      history,
+      history: conversationHistory,
     });
     
     return {response: output.text};
