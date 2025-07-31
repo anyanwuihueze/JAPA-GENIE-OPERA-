@@ -3,6 +3,7 @@
 'use server';
 
 import {ai} from '@/ai/genkit';
+import {generate} from 'genkit';
 import {z} from 'genkit';
 
 const MessageSchema = z.object({
@@ -33,20 +34,36 @@ const aiChatAssistantFlow = ai.defineFlow(
     inputSchema: ChatInputSchema,
     outputSchema: ChatOutputSchema,
   },
-  async ({ query, history }) => {
-    // Define the persona and instructions for the AI model.
-    const systemPrompt =
-      'You are Japa Genie, an AI visa expert for Africans. ' +
-      'Ask once for citizenship, destination, budget, purpose, travel history, education/job. ' +
-      'Then give concise visa advice.';
+  async ({query, history}) => {
+    // Manually construct the conversation history as per the user's provided logic.
+    // This gives us full control over the `contents` array sent to the API.
 
-    // Call the AI model with the system prompt, conversation history, and the new user query.
-    const { output } = await ai.generate({
-      system: systemPrompt,
-      history: history,
+    const systemMessage = {
+      role: 'user' as const,
+      content: [
+        {
+          text:
+            'You are Japa Genie, an AI visa expert for Africans. ' +
+            'Ask once for citizenship, destination, budget, purpose, travel history, education/job. ' +
+            'Then give concise visa advice.',
+        },
+      ],
+    };
+
+    const modelMessage = {
+      role: 'model' as const,
+      content: [{text: 'Understood. I am Japa Genie. How can I help you today?'}],
+    }
+
+    const contents = [systemMessage, modelMessage, ...history];
+    contents.push({role: 'user', content: [{text: query}]});
+
+    const {output} = await generate({
+      model: 'googleai/gemini-1.5-flash-latest',
       prompt: query,
+      history,
     });
     
-    return { response: output.text };
+    return {response: output.text};
   }
 );

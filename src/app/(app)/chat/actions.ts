@@ -1,7 +1,7 @@
 'use server';
 
-import { aiChatAssistant, type ChatInput } from '@/ai/flows/ai-chat-assistant';
-import { z } from 'zod';
+import {aiChatAssistant, type ChatInput} from '@/ai/flows/ai-chat-assistant';
+import {z} from 'zod';
 
 const MessageSchema = z.object({
   role: z.enum(['user', 'assistant']),
@@ -13,8 +13,11 @@ const chatSchema = z.object({
   history: z.array(MessageSchema),
 });
 
-export async function getAiChatResponse(query: string, history: z.infer<typeof MessageSchema>[]) {
-  const parsed = chatSchema.safeParse({ query, history });
+export async function getAiChatResponse(
+  query: string,
+  history: z.infer<typeof MessageSchema>[]
+) {
+  const parsed = chatSchema.safeParse({query, history});
 
   if (!parsed.success) {
     return {
@@ -22,7 +25,7 @@ export async function getAiChatResponse(query: string, history: z.infer<typeof M
       error: 'Invalid input.',
     };
   }
-  
+
   // Convert 'assistant' role to 'model' for the AI flow
   const flowHistory = history.map(message => ({
     role: message.role === 'assistant' ? 'model' : 'user',
@@ -30,7 +33,10 @@ export async function getAiChatResponse(query: string, history: z.infer<typeof M
   })) as ChatInput['history'];
 
   try {
-    const result = await aiChatAssistant({ query: parsed.data.query, history: flowHistory });
+    const result = await aiChatAssistant({
+      query: parsed.data.query,
+      history: flowHistory,
+    });
     return {
       success: true,
       data: result,

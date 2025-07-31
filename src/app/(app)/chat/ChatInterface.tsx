@@ -1,14 +1,13 @@
 'use client';
 
-import { useState, useRef, useEffect, useTransition } from 'react';
-import { getAiChatResponse } from './actions';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { Send, User, Bot, Loader2, Info } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import {useState, useRef, useEffect, useTransition} from 'react';
+import {getAiChatResponse} from './actions';
+import {Button} from '@/components/ui/button';
+import {Input} from '@/components/ui/input';
+import {Avatar, AvatarFallback} from '@/components/ui/avatar';
+import {ScrollArea} from '@/components/ui/scroll-area';
+import {Send, User, Bot, Loader2} from 'lucide-react';
+import {cn} from '@/lib/utils';
 
 interface Message {
   role: 'user' | 'assistant';
@@ -34,42 +33,55 @@ export function ChatInterface() {
     e.preventDefault();
     if (!input.trim()) return;
 
-    const userMessage: Message = { role: 'user', content: input };
-    const newMessages = [...messages, userMessage];
-    setMessages(newMessages);
+    const userMessage: Message = {role: 'user', content: input};
+    setMessages(prev => [...prev, userMessage]);
     setInput('');
 
     startTransition(async () => {
-      // The context is the history of messages before the new user message
-      const context = messages;
-      const response = await getAiChatResponse(userMessage.content, context);
-      
+      const response = await getAiChatResponse(
+        userMessage.content,
+        messages // Pass the history *before* the new user message
+      );
+
       if (response.success && response.data) {
-        setMessages((prev) => [...prev, { role: 'assistant', content: response.data.response }]);
+        setMessages(prev => [
+          ...prev,
+          {role: 'assistant', content: response.data.response},
+        ]);
       } else {
-        setMessages((prev) => [...prev, { role: 'assistant', content: 'Sorry, I encountered an error. Please try again.' }]);
+        setMessages(prev => [
+          ...prev,
+          {
+            role: 'assistant',
+            content:
+              'Sorry, I encountered an error. Please try again.',
+          },
+        ]);
       }
     });
   };
 
   return (
     <div className="flex flex-1 flex-col h-full">
-       <header className="border-b bg-card p-4">
-        <h1 className="font-headline text-2xl font-bold tracking-tight">AI Chat Assistant</h1>
-        <p className="text-muted-foreground">
-          Your intelligent visa expert.
-        </p>
+      <header className="border-b bg-card p-4">
+        <h1 className="font-headline text-2xl font-bold tracking-tight">
+          AI Chat Assistant
+        </h1>
+        <p className="text-muted-foreground">Your intelligent visa expert.</p>
       </header>
       <main className="flex-1 overflow-hidden p-4">
-         <div className="flex flex-col h-full bg-card rounded-lg border">
+        <div className="flex flex-col h-full bg-card rounded-lg border">
           <ScrollArea className="flex-1 p-4" ref={scrollAreaRef}>
             <div className="space-y-6">
               {messages.length === 0 && (
-                  <div className="text-center text-muted-foreground p-8">
-                      <Bot className="mx-auto h-12 w-12 mb-4" />
-                      <p>Start a conversation with Japa Genie.</p>
-                      <p className="text-sm mt-2">Ask about visas, and I'll help you figure out the requirements.</p>
-                  </div>
+                <div className="text-center text-muted-foreground p-8">
+                  <Bot className="mx-auto h-12 w-12 mb-4" />
+                  <p>Start a conversation with Japa Genie.</p>
+                  <p className="text-sm mt-2">
+                    Ask about visas, and I'll help you figure out the
+                    requirements.
+                  </p>
+                </div>
               )}
               {messages.map((message, index) => (
                 <div
@@ -81,7 +93,9 @@ export function ChatInterface() {
                 >
                   {message.role === 'assistant' && (
                     <Avatar className="h-8 w-8">
-                      <AvatarFallback><Bot className="h-5 w-5"/></AvatarFallback>
+                      <AvatarFallback>
+                        <Bot className="h-5 w-5" />
+                      </AvatarFallback>
                     </Avatar>
                   )}
                   <div
@@ -96,20 +110,24 @@ export function ChatInterface() {
                   </div>
                   {message.role === 'user' && (
                     <Avatar className="h-8 w-8">
-                       <AvatarFallback><User className="h-5 w-5"/></AvatarFallback>
+                      <AvatarFallback>
+                        <User className="h-5 w-5" />
+                      </AvatarFallback>
                     </Avatar>
                   )}
                 </div>
               ))}
-               {isPending && (
-                  <div className="flex items-start gap-4">
-                      <Avatar className="h-8 w-8">
-                          <AvatarFallback><Bot className="h-5 w-5"/></AvatarFallback>
-                      </Avatar>
-                      <div className="max-w-md rounded-lg p-3 text-sm bg-muted flex items-center">
-                          <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
-                      </div>
+              {isPending && (
+                <div className="flex items-start gap-4">
+                  <Avatar className="h-8 w-8">
+                    <AvatarFallback>
+                      <Bot className="h-5 w-5" />
+                    </AvatarFallback>
+                  </Avatar>
+                  <div className="max-w-md rounded-lg p-3 text-sm bg-muted flex items-center">
+                    <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
                   </div>
+                </div>
               )}
             </div>
           </ScrollArea>
@@ -117,7 +135,7 @@ export function ChatInterface() {
             <form onSubmit={handleSubmit} className="flex items-center gap-4">
               <Input
                 value={input}
-                onChange={(e) => setInput(e.target.value)}
+                onChange={e => setInput(e.target.value)}
                 placeholder="Citizenship, destination, budget, purpose, history, job?"
                 disabled={isPending}
               />
