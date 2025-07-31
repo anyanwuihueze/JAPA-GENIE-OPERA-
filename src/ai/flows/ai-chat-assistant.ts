@@ -34,20 +34,17 @@ const aiChatAssistantFlow = ai.defineFlow(
     outputSchema: ChatOutputSchema,
   },
   async ({ query, history }) => {
-    
-    let promptToSend = query;
-    let historyToSend = history;
+    // Define the persona and instructions for the AI model.
+    const systemPrompt =
+      'You are Japa Genie, an AI visa expert for Africans. ' +
+      'Ask once for citizenship, destination, budget, purpose, travel history, education/job. ' +
+      'Then give concise visa advice.';
 
-    if (history.length === 0) {
-       promptToSend = 'You are Japa Genie, an AI visa expert for Africans. ' +
-        'Ask once for citizenship, destination, budget, purpose, travel history, education/job. ' +
-        'Then give concise visa advice.\n\nUser: ' + query;
-       historyToSend = [];
-    }
-    
+    // Call the AI model with the system prompt, conversation history, and the new user query.
     const { output } = await ai.generate({
-      history: historyToSend,
-      prompt: promptToSend,
+      system: systemPrompt,
+      history: history,
+      prompt: query,
     });
     
     return { response: output.text };
