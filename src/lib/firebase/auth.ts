@@ -1,3 +1,4 @@
+'use client';
 // src/lib/firebase/auth.ts
 import {
   getAuth,
