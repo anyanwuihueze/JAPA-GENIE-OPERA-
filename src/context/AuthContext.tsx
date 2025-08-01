@@ -2,7 +2,7 @@
 
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
 import type { User } from 'firebase/auth';
-import { onAuthStateChanged, auth } from '@/lib/firebase/auth';
+import { onAuthStateChanged, getFirebaseAuth } from '@/lib/firebase/auth';
 import { Loader2 } from 'lucide-react';
 
 interface AuthContextType {
@@ -17,6 +17,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    const auth = getFirebaseAuth();
+    if (!auth) {
+      setLoading(false);
+      return;
+    }
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       setUser(user);
       setLoading(false);

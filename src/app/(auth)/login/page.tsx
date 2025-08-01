@@ -4,7 +4,7 @@ import React from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { signInWithEmailAndPassword, auth } from '@/lib/firebase/auth';
+import { signInWithEmailAndPassword, getFirebaseAuth } from '@/lib/firebase/auth';
 import { createSessionCookie } from '@/app/auth/actions';
 import { Button } from '@/components/ui/button';
 import {
@@ -46,6 +46,8 @@ export default function LoginPage() {
     setError(null);
     startTransition(async () => {
       try {
+        const auth = getFirebaseAuth();
+        if (!auth) throw new Error('Firebase Auth not initialized');
         const userCredential = await signInWithEmailAndPassword(auth, values.email, values.password);
         const idToken = await userCredential.user.getIdToken();
         await createSessionCookie(idToken);

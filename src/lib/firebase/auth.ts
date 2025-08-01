@@ -6,14 +6,28 @@ import {
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
   signOut,
+  type Auth,
   type User,
 } from 'firebase/auth';
 import { getFirebaseApp } from './client';
 
-// Initialize Firebase Auth and export it
-// This will be null on the server and an auth instance on the client.
-const app = getFirebaseApp();
-export const auth = app ? getAuth(app) : (null as any); // Type assertion to avoid errors in components
+let authInstance: Auth | null = null;
+
+// This function lazily initializes and returns the auth instance.
+// It ensures that Firebase is only initialized on the client.
+export function getFirebaseAuth() {
+  if (typeof window === 'undefined') {
+    return null;
+  }
+  if (!authInstance) {
+    const app = getFirebaseApp();
+    if (app) {
+      authInstance = getAuth(app);
+    }
+  }
+  return authInstance;
+}
+
 
 export { 
     onAuthStateChanged, 
