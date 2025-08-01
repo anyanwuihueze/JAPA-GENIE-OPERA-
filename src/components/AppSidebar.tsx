@@ -101,20 +101,20 @@ export function AppSidebar() {
           </SidebarMenuItem>
           {user ? (
             <SidebarMenuItem>
-               <div className="w-full">
-                <SidebarMenuButton tooltip="Logout" size="lg" className="gap-4 !p-2 w-full">
-                   <Avatar className="size-8">
-                    <AvatarImage src="https://placehold.co/40x40.png" alt="User avatar" data-ai-hint="person" />
-                    <AvatarFallback>{user.email?.[0]?.toUpperCase()}</AvatarFallback>
-                  </Avatar>
-                  <div className="flex flex-col items-start">
-                    <span className="text-sm font-semibold">Logout</span>
-                    <span className="text-xs text-muted-foreground">{user.email}</span>
-                  </div>
-                   <Button variant="ghost" size="icon" type="button" className="ml-auto" onClick={handleLogout}>
-                      <LogOut />
-                   </Button>
-                </SidebarMenuButton>
+               <div className="flex items-center gap-2 p-2 w-full">
+                 <Avatar className="size-8">
+                  <AvatarImage src="https://placehold.co/40x40.png" alt="User avatar" data-ai-hint="person" />
+                  <AvatarFallback>{user.email?.[0]?.toUpperCase()}</AvatarFallback>
+                </Avatar>
+                <div className="flex flex-col items-start w-full min-w-0">
+                  <span className="text-sm font-semibold truncate">{user.isAnonymous ? "Guest User" : "Logout"}</span>
+                  <span className="text-xs text-muted-foreground truncate">{user.email}</span>
+                </div>
+                 {!user.isAnonymous && (
+                    <Button variant="ghost" size="icon" type="button" className="ml-auto shrink-0" onClick={handleLogout}>
+                        <LogOut />
+                    </Button>
+                 )}
               </div>
             </SidebarMenuItem>
           ) : (
