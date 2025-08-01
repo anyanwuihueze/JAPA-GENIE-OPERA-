@@ -8,9 +8,12 @@ import {
   signOut,
   type User,
 } from 'firebase/auth';
-import { firebaseApp } from './client';
+import { getFirebaseApp } from './client';
 
-export const auth = getAuth(firebaseApp);
+// Initialize Firebase Auth and export it
+// This will be null on the server and an auth instance on the client.
+const app = getFirebaseApp();
+export const auth = app ? getAuth(app) : (null as any); // Type assertion to avoid errors in components
 
 export { 
     onAuthStateChanged, 
