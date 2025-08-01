@@ -3,7 +3,6 @@
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
 import type { User } from 'firebase/auth';
 import { onAuthStateChanged, getFirebaseAuth } from '@/lib/firebase/auth';
-import { Loader2 } from 'lucide-react';
 
 interface AuthContextType {
   user: User | null;
@@ -29,13 +28,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     return () => unsubscribe();
   }, []);
 
-  if (loading) {
-     return (
-      <div className="flex h-screen w-screen items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin" />
-      </div>
-    );
-  }
+  // The loader was removed from here. The app will no longer block rendering.
+  // The UI will update reactively based on the user and loading state.
 
   return (
     <AuthContext.Provider value={{ user, loading }}>
