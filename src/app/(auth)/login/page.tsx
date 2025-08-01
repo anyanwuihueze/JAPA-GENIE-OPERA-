@@ -1,10 +1,11 @@
 'use client';
 
-import { useFormState } from 'react-dom';
+import React from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { loginAction } from '@/app/auth/actions';
+import { signInWithEmailAndPassword, auth } from '@/lib/firebase/auth';
+import { createSessionCookie } from '@/app/auth/actions';
 import { Button } from '@/components/ui/button';
 import {
   Form,
@@ -19,7 +20,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import Link from 'next/link';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { AlertCircle, Loader2 } from 'lucide-react';
-import React from 'react';
+import { useRouter } from 'next/navigation';
 
 const formSchema = z.object({
   email: z.string().email(),
@@ -29,8 +30,9 @@ const formSchema = z.object({
 type FormData = z.infer<typeof formSchema>;
 
 export default function LoginPage() {
-  const [state, formAction] = useFormState(loginAction, null);
+  const [error, setError] = React.useState<string | null>(null);
   const [isPending, startTransition] = React.useTransition();
+  const router = useRouter();
 
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
@@ -38,16 +40,19 @@ export default function LoginPage() {
       email: '',
       password: '',
     },
-    errors: state?.error,
   });
 
-  const onSubmit = (values: FormData) => {
-    startTransition(() => {
-      const formData = new FormData();
-      Object.entries(values).forEach(([key, value]) => {
-        formData.append(key, value);
-      });
-      formAction(formData);
+  const onSubmit = async (values: FormData) => {
+    setError(null);
+    startTransition(async () => {
+      try {
+        const userCredential = await signInWithEmailAndPassword(auth, values.email, values.password);
+        const idToken = await userCredential.user.getIdToken();
+        await createSessionCookie(idToken);
+        router.push('/dashboard');
+      } catch (e: any) {
+        setError(e.message);
+      }
     });
   };
 
@@ -60,11 +65,11 @@ export default function LoginPage() {
       <CardContent>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-            {state?.error?._form && (
+            {error && (
               <Alert variant="destructive">
                 <AlertCircle className="h-4 w-4" />
                 <AlertTitle>Login Failed</AlertTitle>
-                <AlertDescription>{state.error._form[0]}</AlertDescription>
+                <AlertDescription>{error}</AlertDescription>
               </Alert>
             )}
             <FormField

@@ -1,12 +1,21 @@
 import { redirect } from 'next/navigation';
-import { auth } from '@/lib/firebase/auth';
+import { cookies } from 'next/headers';
+import { getAuth } from 'firebase-admin/auth';
+import { initializeAdminApp } from '@/lib/firebase/admin';
 
 export default async function Home() {
-    const user = auth.currentUser;
-
-    if(user) {
-        redirect('/dashboard');
-    } else {
+    // Check for session cookie
+    const session = cookies().get('session')?.value;
+    if (!session) {
         redirect('/login');
+    }
+
+    // Verify session cookie
+    try {
+      initializeAdminApp();
+      await getAuth().verifySessionCookie(session, true);
+      redirect('/dashboard');
+    } catch (error) {
+      redirect('/login');
     }
 }

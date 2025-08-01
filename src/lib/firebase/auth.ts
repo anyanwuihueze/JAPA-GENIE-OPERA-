@@ -2,14 +2,20 @@
 import {
   getAuth,
   onAuthStateChanged,
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
+  signOut,
   type User,
 } from 'firebase/auth';
 import { firebaseApp } from './client';
 
 export const auth = getAuth(firebaseApp);
 
-export function onAuthStateChange(callback: (user: User | null) => void) {
-  return onAuthStateChanged(auth, (user) => {
-    callback(user);
-  });
-}
+export { 
+    onAuthStateChanged, 
+    signInWithEmailAndPassword,
+    createUserWithEmailAndPassword,
+    signOut
+};
+
+export type { User };

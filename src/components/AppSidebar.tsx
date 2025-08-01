@@ -26,6 +26,7 @@ import { Logo } from './Logo';
 import { useAuth } from '@/context/AuthContext';
 import { logoutAction } from '@/app/auth/actions';
 import { Button } from './ui/button';
+import { useRouter } from 'next/navigation';
 
 const menuItems = [
   {
@@ -57,6 +58,13 @@ const menuItems = [
 export function AppSidebar() {
   const pathname = usePathname();
   const { user } = useAuth();
+  const router = useRouter();
+
+  const handleLogout = async () => {
+    await logoutAction();
+    // This client-side redirect is important to refresh the auth state
+    router.push('/login'); 
+  };
 
   return (
     <Sidebar>
@@ -93,7 +101,7 @@ export function AppSidebar() {
           </SidebarMenuItem>
           {user ? (
             <SidebarMenuItem>
-              <form action={logoutAction} className="w-full">
+               <div className="w-full">
                 <SidebarMenuButton tooltip="Logout" size="lg" className="gap-4 !p-2 w-full">
                    <Avatar className="size-8">
                     <AvatarImage src="https://placehold.co/40x40.png" alt="User avatar" data-ai-hint="person" />
@@ -103,11 +111,11 @@ export function AppSidebar() {
                     <span className="text-sm font-semibold">Logout</span>
                     <span className="text-xs text-muted-foreground">{user.email}</span>
                   </div>
-                   <Button variant="ghost" size="icon" type="submit" className="ml-auto">
+                   <Button variant="ghost" size="icon" type="button" className="ml-auto" onClick={handleLogout}>
                       <LogOut />
                    </Button>
                 </SidebarMenuButton>
-              </form>
+              </div>
             </SidebarMenuItem>
           ) : (
              <SidebarMenuItem>
