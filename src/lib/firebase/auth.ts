@@ -6,6 +6,7 @@ import {
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
   signOut,
+  signInAnonymously,
   type Auth,
   type User,
 } from 'firebase/auth';
@@ -33,7 +34,8 @@ export {
     onAuthStateChanged, 
     signInWithEmailAndPassword,
     createUserWithEmailAndPassword,
-    signOut
+    signOut,
+    signInAnonymously
 };
 
 export type { User };

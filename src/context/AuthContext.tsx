@@ -2,7 +2,7 @@
 
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
 import type { User } from 'firebase/auth';
-import { onAuthStateChanged, getFirebaseAuth } from '@/lib/firebase/auth';
+import { onAuthStateChanged, getFirebaseAuth, signInAnonymously } from '@/lib/firebase/auth';
 
 interface AuthContextType {
   user: User | null;
@@ -22,14 +22,22 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       return;
     }
     const unsubscribe = onAuthStateChanged(auth, (user) => {
-      setUser(user);
-      setLoading(false);
+      if (user) {
+        setUser(user);
+        setLoading(false);
+      } else {
+        // If no user, sign them in anonymously
+        signInAnonymously(auth).then((anonUser) => {
+           setUser(anonUser.user);
+           setLoading(false);
+        }).catch((error) => {
+            console.error("Anonymous sign-in failed:", error);
+            setLoading(false);
+        });
+      }
     });
     return () => unsubscribe();
   }, []);
-
-  // The loader was removed from here. The app will no longer block rendering.
-  // The UI will update reactively based on the user and loading state.
 
   return (
     <AuthContext.Provider value={{ user, loading }}>
